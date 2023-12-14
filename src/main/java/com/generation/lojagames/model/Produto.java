@@ -24,41 +24,113 @@ public class Produto {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	
+
 	@NotBlank(message = "O atributo [nome] é obrigatório!")
 	@Size(min = 10, max = 150, message = "O [nome] deve conter no mínimo 10 e no máximo 150 caracteres.")
-	@Column(length=150, nullable = false)
+	@Column(length = 150, nullable = false)
 	private String nome;
-	
+
 	@Size(min = 10, max = 150, message = "A [descricao] deve conter no mínimo 10 e no máximo 150 caracteres.")
-	@Column(length=150, nullable = true)
+	@Column(length = 150, nullable = true)
 	private String descricao;
-	
+
 	@NotNull(message = "O [preco] não pode ser vazio.")
 	@Positive(message = "O [preco] deve ser maior que 0")
 	@Digits(integer = 10, fraction = 2)
 	private BigDecimal preco;
-	
+
 	@NotBlank(message = "A [plataforma] é obrigatória!")
-	@Size(min = 10, max = 150, message = "A [plataforma] deve conter no mínimo 10 e no máximo 150 caracteres.")
-	@Column(length=150)
+	@Size(min = 2, max = 150, message = "A [plataforma] deve conter no mínimo 2 e no máximo 150 caracteres.")
+	@Column(length = 150)
 	private String plataforma;
-	
+
 	@NotBlank(message = "A [produtora] é obrigatória!")
-	@Size(min = 10, max = 150, message = "A [produtora] deve conter no mínimo 10 e no máximo 150 caracteres.")
+	@Size(min = 2, max = 150, message = "A [produtora] deve conter no mínimo 10 e no máximo 150 caracteres.")
 	private String produtora;
-	
-	@NotBlank(message = "A [data_lancamento] é obrigatória!")
+
 	@PastOrPresent(message = "Não é possivel adicionar datas do futuro para [data_lancamento]")
+	@NotNull(message = "A [data_lancamento] é obrigatória!")
 	@Column(name = "data_lancamento")
 	private LocalDate dataLancamento;
-	
+
 	@Size(min = 10, max = 500, message = "A [foto] deve conter no mínimo 10 e no máximo 500 caracteres.")
-	@Column(length=500, nullable = true)
+	@Column(length = 500, nullable = true)
 	private String foto;
-	
+
 	@Min(value = 1, message = "A [quantidade] deve ser maior que 0")
 	@NotNull(message = "A [quantidade] é obrigatória!")
 	private Integer quantidade;
-	
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public String getNome() {
+		return nome;
+	}
+
+	public void setNome(String nome) {
+		this.nome = nome;
+	}
+
+	public String getDescricao() {
+		return descricao;
+	}
+
+	public void setDescricao(String descricao) {
+		this.descricao = descricao;
+	}
+
+	public BigDecimal getPreco() {
+		return preco;
+	}
+
+	public void setPreco(BigDecimal preco) {
+		this.preco = preco;
+	}
+
+	public String getPlataforma() {
+		return plataforma;
+	}
+
+	public void setPlataforma(String plataforma) {
+		this.plataforma = plataforma;
+	}
+
+	public String getProdutora() {
+		return produtora;
+	}
+
+	public void setProdutora(String produtora) {
+		this.produtora = produtora;
+	}
+
+	public LocalDate getDataLancamento() {
+		return dataLancamento;
+	}
+
+	public void setDataLancamento(LocalDate dataLancamento) {
+		this.dataLancamento = dataLancamento;
+	}
+
+	public String getFoto() {
+		return foto;
+	}
+
+	public void setFoto(String foto) {
+		this.foto = foto;
+	}
+
+	public Integer getQuantidade() {
+		return quantidade;
+	}
+
+	public void setQuantidade(Integer quantidade) {
+		this.quantidade = quantidade;
+	}
+
 }
