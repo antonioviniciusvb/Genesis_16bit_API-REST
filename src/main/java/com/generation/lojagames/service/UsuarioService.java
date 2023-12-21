@@ -1,5 +1,6 @@
 package com.generation.lojagames.service;
 
+import java.time.LocalDate;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,9 +30,12 @@ public class UsuarioService {
 	private AuthenticationManager authenticationManager;
 
 	public Optional<Usuario> cadastrarUsuario(Usuario usuario) {
-		if (usuarioRepository.findByUsuario(usuario.getUsuario()).isPresent()) {
-			return Optional.empty();
-		}
+
+		if (menorIdade(usuario))
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Usuário deve ser maior de idade", null);
+
+		if (usuarioRepository.findByUsuario(usuario.getUsuario()).isPresent())
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Usuário já existe", null);
 
 		usuario.setSenha(criptografarSenha(usuario.getSenha()));
 
@@ -40,11 +44,15 @@ public class UsuarioService {
 	}
 
 	public Optional<Usuario> atualizarUsuario(Usuario usuario) {
+
+		if (menorIdade(usuario))
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Usuário deve ser maior de idade", null);
+
 		if (usuarioRepository.findById(usuario.getId()).isPresent()) {
-			
+
 			Optional<Usuario> buscaUsuario = usuarioRepository.findByUsuario(usuario.getUsuario());
-			
-			if(buscaUsuario.isPresent() && (buscaUsuario.get().getId() != usuario.getId()))
+
+			if (buscaUsuario.isPresent() && (buscaUsuario.get().getId() != usuario.getId()))
 				throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Usuário já existe!");
 
 			usuario.setSenha(criptografarSenha(usuario.getSenha()));
@@ -80,9 +88,9 @@ public class UsuarioService {
 				return usuarioLogin;
 
 			}
-			
+
 		}
-		
+
 		return Optional.empty();
 	}
 
@@ -94,6 +102,12 @@ public class UsuarioService {
 
 		BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 		return encoder.encode(senha);
+	}
+
+	private boolean menorIdade(Usuario usuario) {
+
+		var hoje = LocalDate.now();
+		return hoje.compareTo(usuario.getDataNascimento()) < 18;
 	}
 
 }

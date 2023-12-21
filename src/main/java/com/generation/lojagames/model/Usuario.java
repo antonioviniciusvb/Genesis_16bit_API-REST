@@ -1,5 +1,6 @@
 package com.generation.lojagames.model;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -16,6 +17,7 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Size;
 
 @Entity
@@ -27,6 +29,7 @@ public class Usuario {
 	private Long id;
 
 	@NotNull(message = "O Atributo Nome é Obrigatório!")
+	@NotBlank(message = "O Atributo Nome não pode ser em branco")
 	private String nome;
 
 	@NotNull(message = "O Atributo Usuário é Obrigatório!")
@@ -40,6 +43,10 @@ public class Usuario {
 	@Size(max = 5000, message = "O link da foto não pode ser maior do que 5000 caracteres")
 	@Column(length = 5000)
 	private String foto;
+
+	@Past(message = "É permitido apenas datas do Passado")
+	@NotNull(message = "O atributo dataNascimento é Obrigatório")
+	private LocalDate dataNascimento; 
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "usuario", cascade = CascadeType.REMOVE)
 	@JsonIgnoreProperties("usuario")
@@ -92,5 +99,15 @@ public class Usuario {
 	public void setProduto(List<Produto> produto) {
 		this.produto = produto;
 	}
+
+	public LocalDate getDataNascimento() {
+		return dataNascimento;
+	}
+
+	public void setDataNascimento(LocalDate dataNascimento) {
+		this.dataNascimento = dataNascimento;
+	}
+	
+	
 
 }
