@@ -33,8 +33,8 @@ public class Produto {
 	@Column(length = 150, nullable = false)
 	private String nome;
 
-	@Size(min = 10, max = 150, message = "A [descricao] deve conter no mínimo 10 e no máximo 150 caracteres.")
-	@Column(length = 150, nullable = true)
+	@Size(min = 10, max = 1000, message = "A [descricao] deve conter no mínimo 10 e no máximo 1000 caracteres.")
+	@Column(length = 1000, nullable = true)
 	private String descricao;
 
 	@NotNull(message = "O [preco] não pode ser vazio.")
