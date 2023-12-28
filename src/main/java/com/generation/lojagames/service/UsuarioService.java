@@ -1,6 +1,7 @@
 package com.generation.lojagames.service;
 
 import java.time.LocalDate;
+import java.time.Period;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -106,8 +107,7 @@ public class UsuarioService {
 
 	private boolean menorIdade(Usuario usuario) {
 
-		var hoje = LocalDate.now();
-		return hoje.compareTo(usuario.getDataNascimento()) < 18;
+		return Period.between(usuario.getDataNascimento(), LocalDate.now()).getYears() < 18;
 	}
 
 }
