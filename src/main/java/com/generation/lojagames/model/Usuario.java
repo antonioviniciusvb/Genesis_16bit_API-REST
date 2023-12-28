@@ -3,6 +3,7 @@ package com.generation.lojagames.model;
 import java.time.LocalDate;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import jakarta.persistence.CascadeType;
@@ -46,6 +47,7 @@ public class Usuario {
 
 	@Past(message = "É permitido apenas datas do Passado")
 	@NotNull(message = "O atributo dataNascimento é Obrigatório")
+	@JsonFormat(pattern = "yyyy-MM-dd")
 	private LocalDate dataNascimento; 
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "usuario", cascade = CascadeType.REMOVE)
