@@ -48,11 +48,23 @@ public class Usuario {
 	@Past(message = "É permitido apenas datas do Passado")
 	@NotNull(message = "O atributo dataNascimento é Obrigatório")
 	@JsonFormat(pattern = "yyyy-MM-dd")
-	private LocalDate dataNascimento; 
+	private LocalDate dataNascimento;
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "usuario", cascade = CascadeType.REMOVE)
 	@JsonIgnoreProperties("usuario")
 	private List<Produto> produto;
+
+	public Usuario(Long id, String nome, String usuario, String senha, String foto, LocalDate dataNascimento) {
+		this.id = id;
+		this.nome = nome;
+		this.usuario = usuario;
+		this.senha = senha;
+		this.foto = foto;
+		this.dataNascimento = dataNascimento;
+	}
+
+	public Usuario() {
+	}
 
 	public Long getId() {
 		return this.id;
@@ -109,7 +121,5 @@ public class Usuario {
 	public void setDataNascimento(LocalDate dataNascimento) {
 		this.dataNascimento = dataNascimento;
 	}
-	
-	
 
 }

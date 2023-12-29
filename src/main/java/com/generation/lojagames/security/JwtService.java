@@ -59,7 +59,7 @@ public class JwtService {
 					.setClaims(claims)
 					.setSubject(userName)
 					.setIssuedAt(new Date(System.currentTimeMillis()))
-					.setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60)) // O último argumento define os minutos
+					.setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 1)) // O último argumento define os minutos
 					.signWith(getSignKey(), SignatureAlgorithm.HS256).compact();
 	}
 
