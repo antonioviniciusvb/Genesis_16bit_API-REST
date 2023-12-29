@@ -14,15 +14,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 
 import com.generation.lojagames.model.Usuario;
-import com.generation.lojagames.model.UsuarioLogin;
 import com.generation.lojagames.repository.UsuarioRepository;
 import com.generation.lojagames.service.UsuarioService;
+import com.generation.lojagames.util.HttpTest;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -76,8 +74,8 @@ public class UsuarioControllerTest {
 		usuarioTeste.setSenha("4ntonio3");
 		usuarioTeste.setDataNascimento(LocalDate.of(1990, 7, 20));
 
-		assertEquals(HttpStatus.CREATED,
-				executaRequisicao(usuarioTeste, "/usuarios/cadastrar", HttpMethod.POST).getStatusCode());
+		assertEquals(HttpStatus.CREATED, HttpTest.executaRequisicao(testRestTemplate, usuarioTeste,
+				"/usuarios/cadastrar", HttpMethod.POST, Usuario.class).getStatusCode());
 	}
 
 	@Test
@@ -86,7 +84,8 @@ public class UsuarioControllerTest {
 
 		String uri = "/usuarios/logar";
 
-		assertEquals(HttpStatus.OK, executaRequisicao(usuarioRoot, uri, HttpMethod.POST).getStatusCode());
+		assertEquals(HttpStatus.OK, HttpTest
+				.executaRequisicao(testRestTemplate, usuarioRoot, uri, HttpMethod.POST, Usuario.class).getStatusCode());
 	}
 
 	@Test
@@ -95,7 +94,9 @@ public class UsuarioControllerTest {
 
 		String uri = "/usuarios/logar";
 
-		assertEquals(HttpStatus.FORBIDDEN, executaRequisicao(usuarioTeste, uri, HttpMethod.POST).getStatusCode());
+		assertEquals(HttpStatus.FORBIDDEN,
+				HttpTest.executaRequisicao(testRestTemplate, usuarioTeste, uri, HttpMethod.POST, Usuario.class)
+						.getStatusCode());
 	}
 
 	@Test
@@ -106,13 +107,14 @@ public class UsuarioControllerTest {
 
 		usuarioTeste.setSenha("");
 
-		var requisicao = executaRequisicao(usuarioTeste, uri, HttpMethod.POST);
+		var requisicao = HttpTest.executaRequisicao(testRestTemplate, usuarioTeste, uri, HttpMethod.POST,
+				Usuario.class);
 
 		assertEquals(HttpStatus.BAD_REQUEST, requisicao.getStatusCode());
 
 		requisicao.getBody().setSenha("  ");
 
-		requisicao = executaRequisicao(usuarioTeste, uri, HttpMethod.POST);
+		requisicao = HttpTest.executaRequisicao(testRestTemplate, usuarioTeste, uri, HttpMethod.POST, Usuario.class);
 
 		assertEquals(HttpStatus.BAD_REQUEST, requisicao.getStatusCode());
 
@@ -126,13 +128,14 @@ public class UsuarioControllerTest {
 
 		usuarioTeste.setNome("");
 
-		var requisicao = executaRequisicao(usuarioTeste, uri, HttpMethod.POST);
+		var requisicao = HttpTest.executaRequisicao(testRestTemplate, usuarioTeste, uri, HttpMethod.POST,
+				Usuario.class);
 
 		assertEquals(HttpStatus.BAD_REQUEST, requisicao.getStatusCode());
 
 		requisicao.getBody().setNome("  ");
 
-		requisicao = executaRequisicao(usuarioTeste, uri, HttpMethod.POST);
+		requisicao = HttpTest.executaRequisicao(testRestTemplate, usuarioTeste, uri, HttpMethod.POST, Usuario.class);
 
 		assertEquals(HttpStatus.BAD_REQUEST, requisicao.getStatusCode());
 
@@ -146,7 +149,9 @@ public class UsuarioControllerTest {
 
 		usuarioTeste.setSenha("123456");
 
-		assertEquals(HttpStatus.BAD_REQUEST, executaRequisicao(usuarioTeste, uri, HttpMethod.POST).getStatusCode());
+		assertEquals(HttpStatus.BAD_REQUEST,
+				HttpTest.executaRequisicao(testRestTemplate, usuarioTeste, uri, HttpMethod.POST, Usuario.class)
+						.getStatusCode());
 
 	}
 
@@ -158,7 +163,9 @@ public class UsuarioControllerTest {
 
 		usuarioService.cadastrarUsuario(usuarioTeste);
 
-		assertEquals(HttpStatus.BAD_REQUEST, executaRequisicao(usuarioTeste, uri, HttpMethod.POST).getStatusCode());
+		assertEquals(HttpStatus.BAD_REQUEST,
+				HttpTest.executaRequisicao(testRestTemplate, usuarioTeste, uri, HttpMethod.POST, Usuario.class)
+						.getStatusCode());
 	}
 
 	@Test
@@ -176,8 +183,9 @@ public class UsuarioControllerTest {
 		usuarioTeste.setUsuario("administracao@genesis16bit.com");
 		usuarioTeste.setDataNascimento(LocalDate.of(1990, 7, 20));
 
-		assertEquals(HttpStatus.OK,
-				executaRequisicao(Optional.of(usuarioTeste), uri, HttpMethod.PUT, usuarioRoot).getStatusCode());
+		assertEquals(HttpStatus.OK, HttpTest
+				.executaRequisicaoAuth(testRestTemplate, Optional.of(usuarioTeste), uri, HttpMethod.PUT, usuarioRoot)
+				.getStatusCode());
 
 	}
 
@@ -191,8 +199,9 @@ public class UsuarioControllerTest {
 		usuarioService.cadastrarUsuario(new Usuario(0L, "Administrativo", "luis@genesis16bit.com", "administrac4o", "",
 				LocalDate.of(1990, 7, 20)));
 
-		assertEquals(HttpStatus.OK,
-				executaRequisicao(Optional.empty(), "/usuarios", HttpMethod.GET, usuarioRoot).getStatusCode());
+		assertEquals(HttpStatus.OK, HttpTest
+				.executaRequisicaoAuth(testRestTemplate, Optional.empty(), "/usuarios", HttpMethod.GET, usuarioRoot)
+				.getStatusCode());
 
 	}
 
@@ -204,42 +213,28 @@ public class UsuarioControllerTest {
 
 		usuarioTeste.setDataNascimento(LocalDate.now());
 
-		assertEquals(HttpStatus.BAD_REQUEST, executaRequisicao(usuarioTeste, uri, HttpMethod.POST).getStatusCode());
+		assertEquals(HttpStatus.BAD_REQUEST,
+				HttpTest.executaRequisicao(testRestTemplate, usuarioTeste, uri, HttpMethod.POST, Usuario.class)
+						.getStatusCode());
 
 		usuarioTeste.setDataNascimento(LocalDate.of(2050, 5, 14));
 
-		assertEquals(HttpStatus.BAD_REQUEST, executaRequisicao(usuarioTeste, uri, HttpMethod.POST).getStatusCode());
+		assertEquals(HttpStatus.BAD_REQUEST,
+				HttpTest.executaRequisicao(testRestTemplate, usuarioTeste, uri, HttpMethod.POST, Usuario.class)
+						.getStatusCode());
 
 		usuarioTeste.setDataNascimento(LocalDate.of(2020, 4, 5));
 
-		assertEquals(HttpStatus.BAD_REQUEST, executaRequisicao(usuarioTeste, uri, HttpMethod.POST).getStatusCode());
+		assertEquals(HttpStatus.BAD_REQUEST,
+				HttpTest.executaRequisicao(testRestTemplate, usuarioTeste, uri, HttpMethod.POST, Usuario.class)
+						.getStatusCode());
 
 		usuarioTeste.setDataNascimento(LocalDate.of(1970, 11, 30));
 
-		assertEquals(HttpStatus.CREATED, executaRequisicao(usuarioTeste, uri, HttpMethod.POST).getStatusCode());
+		assertEquals(HttpStatus.CREATED,
+				HttpTest.executaRequisicao(testRestTemplate, usuarioTeste, uri, HttpMethod.POST, Usuario.class)
+						.getStatusCode());
 
 	}
-
-	private ResponseEntity<Usuario> executaRequisicao(Usuario corpo, String uri, HttpMethod metodo) {
-
-		return testRestTemplate.exchange(uri, metodo, new HttpEntity<Usuario>(corpo), Usuario.class);
-	}
-
-	private ResponseEntity<String> executaRequisicao(Optional<Usuario> corpo, String uri, HttpMethod metodo,
-			Usuario usuario) {
-
-		var corpoRequisicao = corpo.isPresent() ? new HttpEntity<Usuario>(corpo.get()) : null;
-
-		return testRestTemplate.withBasicAuth(usuario.getUsuario(), usuario.getSenha()).exchange(uri, metodo,
-				corpoRequisicao, String.class);
-	}
-
-//	private ResponseEntity<String> executaRequisicao(Optional<Usuario> corpo, String uri, HttpMethod metodo,
-//			String userName, String passWord) {
-//
-//		var corpoRequisicao = corpo.isPresent() ? new HttpEntity<Usuario>(corpo.get()) : null;
-//
-//		return testRestTemplate.withBasicAuth(userName, passWord).exchange(uri, metodo, corpoRequisicao, String.class);
-//	}
 
 }
